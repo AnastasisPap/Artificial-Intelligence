@@ -8,7 +8,7 @@ def main():
     checkers = [30, 30]
     turn = 1
     
-    while not board.full() and checkers[0] + checkers[1] > 0:
+    while checkers[0] + checkers[1] > 0:
         
         if board.hasLegalMove(turn):
             print(f"{player_color[turn]} plays!")

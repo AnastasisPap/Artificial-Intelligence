@@ -53,12 +53,10 @@ class Board:
         print(self.colors)
 
     def hasLegalMove(self, player):
-        for r in range(len(self.board)):
-            for c in range(len(self.board[0])):
-                if self.board[r][c] == -1:
-                    possibleMoves = self.findMoves(r, c, player)
-                    if possibleMoves.hasMoves: return True
-
+        emptySquares = self.getChildren()
+        for square in emptySquares:
+            possibleMoves = self.findMoves(square[0], square[1], player)
+            if possibleMoves.hasMoves: return True
 
         return False
         
@@ -184,8 +182,22 @@ class Board:
         return [currRow, currCol]
 
 
-    def winnerExists(self):
-        return self.colors[0] == 0 or self.colors[1] == 0
+    def isTerminal(self):
+        return (not self.hasLegalMove(0) and not self.hasLegalMove(1)) or self.colors[0] == 0 or self.colors[1] == 0 or sum(self.colors) == 64
+
+    def getChildren(self):
+        c = []
+        for r in range(len(self.board)):
+            for c in range(len(self.board[0])):
+                if self.board[r][c] == -1:
+                    c.append([r, c])
+        return c
+
+    def getCopy(self):
+        newBoard = Board(self.colors[0], self.colors[1])
+        newBoard.board = [[value for value in row] for row in self.board] 
+
+        return newBoard
 
 
     def testBoard(self):
