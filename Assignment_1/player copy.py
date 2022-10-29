@@ -19,8 +19,7 @@ class Player:
         maxCoords = (-1, -1)
         for child in board.getChildren():
             newBoard = board.getCopy()
-            newBoard.makeMove(child[0], child[1], 1)
-            currValue = self.minValue(newBoard, depth + 1)
+            currValue = self.minValue(newBoard.makeMove(child[0], child[1], 1), depth + 1)
             if currValue >= currMax:
                 if currValue == currMax and random.uniform() <= 0.5:
                     continue
@@ -37,8 +36,7 @@ class Player:
         minCoords = (-1, -1)
         for child in board.getChildren():
             newBoard = board.getCopy()
-            newBoard.makeMove(child[0], child[1], 0)
-            currValue = self.maxValue(newBoard, depth + 1)
+            currValue = self.maxValue(newBoard.makeMove(child[0], child[1], 0), depth + 1)
             if currValue <= currMin:
                 if currValue == currMin and random.uniform() <= 0.5:
                     continue

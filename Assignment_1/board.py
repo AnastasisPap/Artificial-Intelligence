@@ -186,16 +186,17 @@ class Board:
         return (not self.hasLegalMove(0) and not self.hasLegalMove(1)) or self.colors[0] == 0 or self.colors[1] == 0 or sum(self.colors) == 64
 
     def getChildren(self):
-        c = []
+        children = []
         for r in range(len(self.board)):
             for c in range(len(self.board[0])):
                 if self.board[r][c] == -1:
-                    c.append([r, c])
-        return c
+                    children.append([r, c])
+        return children
 
     def getCopy(self):
-        newBoard = Board(self.colors[0], self.colors[1])
+        newBoard = Board()
         newBoard.board = [[value for value in row] for row in self.board] 
+        newBoard.colors = [color for color in self.colors]
 
         return newBoard
 
