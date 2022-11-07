@@ -23,6 +23,7 @@ class PossibleMoves:
         if diagonals[0] != -1: self.leftGoingUp = diagonals[0] 
         if diagonals[1] != -1: self.leftGoingDown = diagonals[1] 
 
+
 class Board:
     def __init__(self):
         # -1 = Empty spot, 0 = white, 1 = black
@@ -40,15 +41,19 @@ class Board:
 
 
     def printBoard(self):
-        dict = {-1 : "   ", 1 : ' ● ', 0 : ' ○ '}
+        symbols = {-1: "   ", 1: ' B ', 0: ' W '}
+        print("  ",end='')
+        for i in range(8):
+            print(f"  {i} ", end='')
+        print()
         t = "―" * 30
 
-        for r in self.board:
+        for i in range(len(self.board)):
             print(t)
             s = ''
-            for c in r: 
-                s += '|' + dict[c]
-            print(s + '|')
+            for c in self.board[i]:
+                s += '|' + symbols[c]
+            print(str(i) + " " + s + '|')
         print(t)
         print(self.colors)
 
@@ -175,8 +180,8 @@ class Board:
             if self.board[currRow][currCol] == -1: return [-1, -1]
             currCol += stepCol
             currRow += stepRow
-        
-        if currCol == startCol + stepCol and currRow == startRow + stepRow or (currCol == 8 or currRow == 8):
+
+        if (currCol < 0 or currCol > 7 or currRow < 0 or currRow > 7) or (currCol == startCol + stepCol and currRow == startRow + stepRow):
             return [-1, -1]
 
         return [currRow, currCol]
@@ -184,6 +189,7 @@ class Board:
 
     def isTerminal(self):
         return (not self.hasLegalMove(0) and not self.hasLegalMove(1)) or self.colors[0] == 0 or self.colors[1] == 0 or sum(self.colors) == 64
+
 
     def getChildren(self):
         children = []
@@ -200,29 +206,10 @@ class Board:
 
         return newBoard
 
+    def getLegalMoves(self, diskColor):
+        legalMoves = []
+        for ch in self.getChildren():
+            if self.findMoves(ch[0], ch[1], diskColor).hasMoves:
+                legalMoves.append(ch)
 
-    def testBoard(self):
-        self.board[1][1] = 1
-        self.board[2][2] = 1
-        self.board[2][3] = 0
-        self.board[2][4] = 1
-        self.board[2][5] = 1
-        self.board[1][5] = 1
-        self.board[3][3] = 0
-        self.board[3][4] = 1
-        self.board[3][5] = 1
-        self.board[4][1] = 0
-        self.board[4][2] = 0
-        self.board[4][3] = 0
-        self.board[4][4] = 1
-        self.board[4][5] = 0
-        self.board[4][6] = 0
-        self.board[4][7] = 0
-        self.board[5][1] = 0
-        self.board[5][1] = 0
-        self.board[5][5] = 1
-        self.board[5][3] = 0
-        self.board[6][3] = 0
-        self.board[6][6] = 1
-        self.board[6][7] = 0
-        self.board[7][7] = 1
+        return legalMoves
