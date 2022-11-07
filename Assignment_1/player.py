@@ -1,5 +1,5 @@
-from random import randint
 from numpy import random 
+from utilities import *
 from board import Board
 
 class Player: 
@@ -8,12 +8,14 @@ class Player:
         self.optCoords = (-1, -1)
     
     def miniMax(self, board):
-       self.maxValue(board, 0) 
-       return self.optCoords
+        board.initialColors[0] = board.colors[0]
+        board.initialColors[1] = board.colors[1]
+        self.maxValue(board, 0, float('-inf'), float('inf')) 
+        return self.optCoords
 
     def maxValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            return self.h1(board)
+            return self.u1(board, 1)
 
         currMax = float('-inf')
         maxCoords = (-1, -1)
@@ -41,7 +43,7 @@ class Player:
 
     def minValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            return self.h1(board)
+            return self.u1(board, 0)
 
         currMin = float('inf')
         minCoords = (-1, -1)
@@ -66,6 +68,3 @@ class Player:
 
         self.optCoords = minCoords
         return currMin
-    
-    def h1(self, board):
-        return randint(0, 10)

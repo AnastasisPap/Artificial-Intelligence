@@ -32,6 +32,7 @@ class Board:
         self.board[3][4] = 1
         self.board[4][3] = 1
         self.board[4][4] = 0
+        self.initialColors = [2, 2]
 
         self.colors = [2, 2]
 
@@ -56,6 +57,7 @@ class Board:
             print(str(i) + " " + s + '|')
         print(t)
         print(self.colors)
+
 
     def hasLegalMove(self, player):
         emptySquares = self.getChildren()
@@ -199,12 +201,15 @@ class Board:
                     children.append([r, c])
         return children
 
+
     def getCopy(self):
         newBoard = Board()
         newBoard.board = [[value for value in row] for row in self.board] 
         newBoard.colors = [color for color in self.colors]
+        newBoard.initialColors = [color for color in self.initialColors]
 
         return newBoard
+
 
     def getLegalMoves(self, diskColor):
         legalMoves = []
