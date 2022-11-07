@@ -7,15 +7,17 @@ def main():
 
     player_color = ['White', 'Black']
     checkers = [30, 30]
+    playsFirst = 1 if input('Do you want to play first (yes/no): ').lower() == 'yes' else 0
     turn = 1
+    maxDepth = int(input("Max Depth: "))
     
-    player = Player(2)
+    player = Player(maxDepth, 1 - playsFirst)
     while checkers[0] + checkers[1] > 0:
         
         if board.hasLegalMove(turn):
             print(f"{player_color[turn]} plays!")
 
-            if turn == 0:
+            if turn == playsFirst:
                 while True:
                     
                     # Input validation required
@@ -24,13 +26,12 @@ def main():
 
                     if not board.makeMove(r, c, turn):
                         continue
-
                     
                     break
             else:
                 moveCoords = player.miniMax(board)
                 print(moveCoords)
-                board.makeMove(moveCoords[0], moveCoords[1], 1)
+                board.makeMove(moveCoords[0], moveCoords[1], 1 - playsFirst)
                 
             if checkers[turn] ==  0:
                 checkers[1-turn] -= 1
