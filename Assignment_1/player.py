@@ -2,11 +2,13 @@ from numpy import random
 from utilities import *
 from board import Board
 
+
 class Player: 
-    def __init__(self, maxDepth, diskColor):
+    def __init__(self, maxDepth, diskColor, weights):
         self.maxDepth = maxDepth
         self.optCoords = (-1, -1)
         self.diskColor = diskColor
+        self.weights = weights
     
     def miniMax(self, board):
         board.initialColors[0] = board.colors[0]
@@ -16,7 +18,7 @@ class Player:
 
     def maxValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            return u1(board, self.diskColor)
+            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u3() + self.weights[2] * u4()
 
         currMax = float('-inf')
         maxCoords = (-1, -1)
@@ -25,6 +27,7 @@ class Player:
         if len(legalMoves) == 0:
             legalMoves.append([-1, -1])
 
+        self.board.legalMovesSum += len(legalMoves)
         for child in legalMoves:
             newBoard = board.getCopy()
             newBoard.makeMove(child[0], child[1], self.diskColor)
@@ -45,7 +48,7 @@ class Player:
     def minValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
             # Should this be the diskColor of the root or the other turn?
-            return u1(board, self.diskColor)
+            return self.weights[0] * u1(board, 1 - self.diskColor) + self.weights[1] * u3() + self.weights[2] * u4()
 
         currMin = float('inf')
         minCoords = (-1, -1)
@@ -54,6 +57,7 @@ class Player:
         if len(legalMoves) == 0:
             legalMoves.append([-1, -1])
 
+        board.opponentLegalMovesSum += len(legalMoves)
         for child in legalMoves:
             newBoard = board.getCopy()
             newBoard.makeMove(child[0], child[1], 1 - self.diskColor)

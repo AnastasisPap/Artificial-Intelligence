@@ -61,6 +61,11 @@ class Board:
         # initialColors[0]([1]) = the number of white (black) disks
         self.colors = [2, 2]
 
+        # total legal moves
+        self.legalMovesSum = 0
+
+        # total legal moves of the opponent
+        self.opponentLegalMovesSum = 0
 
     # Returns true if the whole board is filled
     def full(self):
@@ -254,6 +259,8 @@ class Board:
         newBoard.board = [[value for value in row] for row in self.board] 
         newBoard.colors = [color for color in self.colors]
         newBoard.initialColors = [color for color in self.initialColors]
+        newBoard.legalMovesSum = self.legalMovesSum
+        newBoard.opponentLegalMovesSum = self.opponentLegalMovesSum
 
         return newBoard
 

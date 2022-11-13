@@ -1,6 +1,7 @@
 from player import Player
 from board import Board
 
+
 def main():
     board = Board()
     board.printBoard()
@@ -11,7 +12,7 @@ def main():
     turn = 1
     maxDepth = int(input("Max Depth: "))
     
-    player = Player(maxDepth, 1 - playsFirst)
+    player = Player(maxDepth, 1 - playsFirst, (0.4, 0.3, 0.3))
     while checkers[0] + checkers[1] > 0:
         
         if board.hasLegalMove(turn):
@@ -30,10 +31,11 @@ def main():
                     break
             else:
                 moveCoords = player.miniMax(board)
+                # Don't forget to remove.
                 print(moveCoords)
                 board.makeMove(moveCoords[0], moveCoords[1], 1 - playsFirst)
                 
-            if checkers[turn] ==  0:
+            if checkers[turn] == 0:
                 checkers[1-turn] -= 1
                 checkers[turn] += 1
                 checkers[turn] -= 1
@@ -47,7 +49,9 @@ def main():
 
     if board.colors[0] > board.colors[1]:
         print('White player wins!')
+    elif board.colors[0] < board.colors[1]:
+        print('Black player wins!')
     else:
-        print('Black player wins!')            
+        print('Draw!')
               
 main()
