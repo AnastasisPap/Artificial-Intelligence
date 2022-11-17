@@ -11,10 +11,12 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
         print(f'============================ GENERATION #{iteration + 1} ===========================')
         newPopulation = []
         selectionProbability = evaluate(currentPopulation)
+        if iteration == 0 or iteration == numOfGenerations - 1:
+            print(selectionProbability)
         for i in range(populationSize // 2):
             firstIdx, secondIdx = np.random.choice(populationSize, size=2, p=selectionProbability)
             while firstIdx == secondIdx:
-                secondIdx = np.random.choice(populationSize, size=1, p=selectionProbability)
+                secondIdx = np.random.choice(populationSize, size=1, p=selectionProbability)[0]
             
             firstParent = currentPopulation[firstIdx]
             secondParent = currentPopulation[secondIdx]
@@ -26,6 +28,7 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
             newPopulation.append(secondChild)
         currentPopulation = newPopulation
     
+        # This doesn't keep the max correctly
         if max(selectionProbability) > winProbability:
             winProbability = max(selectionProbability)
             bestWeight = currentPopulation[selectionProbability.index(winProbability)]
@@ -78,4 +81,4 @@ def mutate(x, mutationProbability):
     
     return tuple(newChromosome)
 
-runGeneration(4, 4, 0.01, 10)
+runGeneration(10, 4, 0.01, 100)
