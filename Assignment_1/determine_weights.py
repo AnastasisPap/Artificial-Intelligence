@@ -3,11 +3,12 @@ from board import Board
 from numpy import random
 import random as rand
 
-
+# Conducts a 1 v 1 Knockout Elimination Style Tournament and returns the winner's weights.
 def tournament(weights):
     while len(weights) > 1:
         newWeights = []
         for j in range(1, len(weights), 2):
+            # Randomly determine color of each 'player'.
             if random.uniform() <= 0.5:
                 newWeights.append(battle(weights[j-1], weights[j])[0])
             else:
@@ -17,11 +18,12 @@ def tournament(weights):
     return weights[0]
 
 
-def battle(blackWeights, whiteWeights):
+
+# Plays game between two bots with specified weights, returns tuple with  winner's weights and 1 if black wins, 0 if white wins or -1 if it's a tie.
+def battle(blackWeights, whiteWeights, maxDepth = 2):
     board = Board()
     checkers = [30, 30]
     turn = 1
-    maxDepth = 2
 
     blackPlayer = Player(maxDepth, 1, blackWeights)
     whitePlayer = Player(maxDepth, 0, whiteWeights)
@@ -33,6 +35,7 @@ def battle(blackWeights, whiteWeights):
             moveCoords = players[turn].miniMax(board)
             board.makeMove(moveCoords[0], moveCoords[1], turn)
 
+            # A player must give a checker to the other player if he doesn't have one to play.
             if checkers[turn] == 0:
                 checkers[1 - turn] -= 1
                 checkers[turn] += 1
@@ -48,9 +51,9 @@ def battle(blackWeights, whiteWeights):
         return blackWeights, 1
     else:
         if random.uniform() <= 0.5:
-            return whiteWeights, 0
+            return whiteWeights, -1
         else:
-            return blackWeights, 1
+            return blackWeights, -1
 
 
 # Using Modified Kraemer Algorithm to generate uniformly distributed pi s.t sum(pi) = 1,Note: every pi <> 0
@@ -69,6 +72,7 @@ def generateStartingWeights(numOfTuples, numOfWeights):
     return startingWeights
 
 
+# Modified Kraemer Algorithm to generate uniformly distributed pi's s.t sum(pi) = sm,Note: every pi <> 0
 def generateTuple(numOfWeights, sm):
     M = 1000000
     t = rand.sample(range(M+1), numOfWeights - 1)
@@ -76,12 +80,15 @@ def generateTuple(numOfWeights, sm):
     t.append(M)
     t.sort()
     y = []
-    for i in range(1, len(t)):
+    for i in range(1, len(t) - 1):
         y.append((t[i]-t[i-1])/M*sm)
 
+    y += [sm - sum(y)]
     return tuple(y)
 
 
+# Conducts numOfTuples tournaments, then conducts final tournament with winners of the tournaments and prints the
+# winner's weights.
 def determine(numOfTuples, numOfWeights):
     finale = []
     for i in range(numOfTuples):

@@ -36,6 +36,11 @@ def u4(board):
     # 32 = max amount of legal moves
     return 32 * board.opponentTimesPlayed - board.opponentLegalMovesSum
 
+def u5(board, diskColor):
+    if not board.isTerminal() or board.colors[0] == board.colors[1]: return 0
+
+    return float('inf') if board.colors[diskColor] > board.colors[1-diskColor] else float('-inf')
+
 def getPosValues():
     redPositions = [(0, 0), (0, 7), (7, 0), (7, 7)]
     orangePositions = [(0, 1), (1, 0), (1, 1), (0, 6), (1, 7), (1, 6), (6, 0), (6, 1), (7, 1), (7, 6), (6, 6), (6, 7)]

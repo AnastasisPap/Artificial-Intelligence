@@ -2,19 +2,24 @@ import numpy as np
 import random as rand
 from determine_weights import *
 
-def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize):
+def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth):
+
+    # Generate starting population, each chromosome represents a tuple of values (weights) with total sum = 1 .
     currentPopulation = generateStartingWeights(populationSize, numOfWeights)
+    
     bestWeight = None
     winProbability = 0
 
     for iteration in range(numOfGenerations):
         print(f'============================ GENERATION #{iteration + 1} ===========================')
         newPopulation = []
-        selectionProbability = evaluate(currentPopulation)
+        selectionProbability = evaluate(currentPopulation, maxDepth)
         if iteration == 0 or iteration == numOfGenerations - 1:
             print(selectionProbability)
         for i in range(populationSize // 2):
             firstIdx, secondIdx = np.random.choice(populationSize, size=2, p=selectionProbability)
+
+            # Make sure that chromosomes that reproduce are different.
             while firstIdx == secondIdx:
                 secondIdx = np.random.choice(populationSize, size=1, p=selectionProbability)[0]
             
@@ -38,7 +43,11 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
     return bestWeight
 
 
-def evaluate(evaluationChromosomes):
+# Chromosomes represent weights for bot-players.
+# Each player battles with every other player, the number of wins of every player is counted
+# and probability of selection for reproduction is calculated for each chromosome.
+# The more wins the higher the chance to be selected for reproduction.
+def evaluate(evaluationChromosomes, maxDepth):
     populationSize = len(evaluationChromosomes)
     results = [0] * populationSize 
     print('Battle progress:', end=" ")
@@ -46,10 +55,10 @@ def evaluate(evaluationChromosomes):
         for j in range(populationSize):
             if j == 0: print('*', end=" ")
             if i != j:
-                _, winner = battle(evaluationChromosomes[i], evaluationChromosomes[j])
+                _, winner = battle(evaluationChromosomes[i], evaluationChromosomes[j], maxDepth)
                 if winner == 0:
                     results[j] += 1
-                else:
+                elif winner == 1:
                     results[i] += 1
     
     totalGames = (populationSize - 1) * populationSize
@@ -68,7 +77,8 @@ def reproduce(x, y):
 
 def mutate(x, mutationProbability):
     idxes = []
-    weightsSum = 0
+    weightsSum = 0 # total weight that will go unchanged.
+
     for i in range(len(x)):
         if  np.random.uniform() < mutationProbability:
             idxes.append(i)
@@ -76,6 +86,8 @@ def mutate(x, mutationProbability):
             weightsSum += x[i]
     
     if len(idxes) == 0: return x
+
+    # distribute remaining weight randomly for the selected weights to be altered.
     mutatedWeights = generateTuple(len(idxes), 1 - weightsSum)
 
     newChromosome = list(x)
@@ -84,4 +96,4 @@ def mutate(x, mutationProbability):
     
     return tuple(newChromosome)
 
-runGeneration(10, 4, 0.01, 100)
+runGeneration(10, 4, 0.01, 100, 2)
