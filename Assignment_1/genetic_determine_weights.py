@@ -26,12 +26,13 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
 
             newPopulation.append(firstChild)
             newPopulation.append(secondChild)
-        currentPopulation = newPopulation
     
         # This doesn't keep the max correctly
         if max(selectionProbability) > winProbability:
             winProbability = max(selectionProbability)
             bestWeight = currentPopulation[selectionProbability.index(winProbability)]
+
+        currentPopulation = newPopulation
 
     print(f'Best weight from {numOfGenerations} generations: {bestWeight}')
     return bestWeight
@@ -40,8 +41,10 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
 def evaluate(evaluationChromosomes):
     populationSize = len(evaluationChromosomes)
     results = [0] * populationSize 
+    print('Battle progress:', end=" ")
     for i in range(populationSize):
         for j in range(populationSize):
+            if j == 0: print('*', end=" ")
             if i != j:
                 _, winner = battle(evaluationChromosomes[i], evaluationChromosomes[j])
                 if winner == 0:
