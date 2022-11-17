@@ -18,7 +18,7 @@ class Player:
 
     def maxValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u3(board) + self.weights[2] * u4(board)
+            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u2(board) + self.weights[2] * u3(board, self.diskColor) + self.weights[3] * u4(board)
 
         currMax = float('-inf')
         maxCoords = (-1, -1)
@@ -27,7 +27,7 @@ class Player:
         if len(legalMoves) == 0:
             legalMoves.append([-1, -1])
 
-        self.board.legalMovesSum += len(legalMoves)
+        board.legalMovesSum += len(legalMoves)
         for child in legalMoves:
             newBoard = board.getCopy()
             newBoard.makeMove(child[0], child[1], self.diskColor)
@@ -48,7 +48,7 @@ class Player:
     def minValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
             # Should this be the diskColor of the root or the other turn?
-            return self.weights[0] * u1(board, 1 - self.diskColor) + self.weights[1] * u3() + self.weights[2] * u4()
+            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u2(board) + self.weights[2] * u3(board, self.diskColor) + self.weights[3] * u4(board)
 
         currMin = float('inf')
         minCoords = (-1, -1)

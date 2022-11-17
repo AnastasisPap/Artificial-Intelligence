@@ -2,13 +2,13 @@ import numpy as np
 import random as rand
 from determine_weights import *
 
-def runGeneration(numOfGenerations, numOfWeights, mutationProbability):
-    populationSize = 100
+def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize):
     currentPopulation = generateStartingWeights(populationSize, numOfWeights)
     bestWeight = None
     winProbability = 0
 
     for iteration in range(numOfGenerations):
+        print(f'============================ GENERATION #{iteration + 1} ===========================')
         newPopulation = []
         selectionProbability = evaluate(currentPopulation)
         for i in range(populationSize // 2):
@@ -30,6 +30,7 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability):
             winProbability = max(selectionProbability)
             bestWeight = currentPopulation[selectionProbability.index(winProbability)]
 
+    print(f'Best weight from {numOfGenerations} generations: {bestWeight}')
     return bestWeight
 
 
@@ -76,3 +77,5 @@ def mutate(x, mutationProbability):
         newChromosome[idx] = mutatedWeights[i]
     
     return tuple(newChromosome)
+
+runGeneration(4, 4, 0.01, 10)
