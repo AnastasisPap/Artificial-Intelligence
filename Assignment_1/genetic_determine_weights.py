@@ -24,7 +24,7 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
 
             newPopulation.append(firstChild)
             newPopulation.append(secondChild)
-            currentPopulation = newPopulation
+        currentPopulation = newPopulation
     
         if max(selectionProbability) > winProbability:
             winProbability = max(selectionProbability)
