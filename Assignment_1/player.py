@@ -18,7 +18,7 @@ class Player:
 
     def maxValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u3() + self.weights[2] * u4()
+            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u3(board) + self.weights[2] * u4(board)
 
         currMax = float('-inf')
         maxCoords = (-1, -1)
@@ -58,6 +58,7 @@ class Player:
             legalMoves.append([-1, -1])
 
         board.opponentLegalMovesSum += len(legalMoves)
+        board.opponentTimesPlayed += 1
         for child in legalMoves:
             newBoard = board.getCopy()
             newBoard.makeMove(child[0], child[1], 1 - self.diskColor)

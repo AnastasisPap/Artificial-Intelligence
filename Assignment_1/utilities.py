@@ -33,7 +33,8 @@ def u3(board, diskColor):
 # the amount of legal moves the opponent has
 # 1 - normalized value
 def u4(board):
-    return 1 / board.opponentLegalMoves
+    # 32 = max amount of legal moves
+    return 32 * board.opponentTimesPlayed - board.opponentLegalMoves
 
 def getPosValues():
     redPositions = [(0, 0), (0, 7), (7, 0), (7, 7)]

@@ -66,6 +66,7 @@ class Board:
 
         # total legal moves of the opponent
         self.opponentLegalMovesSum = 0
+        self.opponentTimesPlayed = 0
 
     # Returns true if the whole board is filled
     def full(self):
