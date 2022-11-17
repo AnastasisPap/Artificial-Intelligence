@@ -96,4 +96,9 @@ def mutate(x, mutationProbability):
     
     return tuple(newChromosome)
 
-runGeneration(10, 4, 0.01, 100, 2)
+numOfGenerations = int(input("Num of generations: "))
+numOfWeights = 4
+mutationProbability = 0.01
+populationSize = int(input("Population size: "))
+maxDepth = int(input("Max depth: "))
+runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth)
