@@ -80,10 +80,9 @@ def generateTuple(numOfWeights, sm):
     t.append(M)
     t.sort()
     y = []
-    for i in range(1, len(t) - 1):
+    for i in range(1, len(t)):
         y.append((t[i]-t[i-1])/M*sm)
 
-    y += [sm - sum(y)]
     return tuple(y)
 
 

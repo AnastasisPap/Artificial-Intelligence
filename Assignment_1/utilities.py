@@ -38,8 +38,9 @@ def u4(board):
 
 def u5(board, diskColor):
     if not board.isTerminal() or board.colors[0] == board.colors[1]: return 0
+    bigNumber = 10 ** 5
 
-    return float('inf') if board.colors[diskColor] > board.colors[1-diskColor] else float('-inf')
+    return bigNumber if board.colors[diskColor] > board.colors[1-diskColor] else -bigNumber
 
 def getPosValues():
     redPositions = [(0, 0), (0, 7), (7, 0), (7, 7)]

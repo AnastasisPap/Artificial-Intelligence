@@ -1,11 +1,13 @@
 import numpy as np
 import random as rand
 from determine_weights import *
+import os
 
 def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth):
 
     # Generate starting population, each chromosome represents a tuple of values (weights) with total sum = 1 .
     currentPopulation = generateStartingWeights(populationSize, numOfWeights)
+    logging = Log(numOfGenerations, mutationProbability, populationSize, maxDepth)
     
     bestWeight = None
     winProbability = 0
@@ -14,8 +16,6 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
         print(f'============================ GENERATION #{iteration + 1} ===========================')
         newPopulation = []
         selectionProbability = evaluate(currentPopulation, maxDepth)
-        if iteration == 0 or iteration == numOfGenerations - 1:
-            print(selectionProbability)
         for i in range(populationSize // 2):
             firstIdx, secondIdx = np.random.choice(populationSize, size=2, p=selectionProbability)
 
@@ -37,9 +37,9 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
             winProbability = max(selectionProbability)
             bestWeight = currentPopulation[selectionProbability.index(winProbability)]
 
+        logging.log(bestWeight, winProbability)
         currentPopulation = newPopulation
 
-    print(f'Best weight from {numOfGenerations} generations: {bestWeight}')
     return bestWeight
 
 
@@ -50,18 +50,22 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
 def evaluate(evaluationChromosomes, maxDepth):
     populationSize = len(evaluationChromosomes)
     results = [0] * populationSize 
-    print('Battle progress:', end=" ")
+    totalGames = (populationSize - 1) * populationSize
+    print(f'Battle progress: 0/{totalGames}', end="\r")
+    cnt = 0
     for i in range(populationSize):
         for j in range(populationSize):
-            if j == 0: print('*', end=" ")
             if i != j:
                 _, winner = battle(evaluationChromosomes[i], evaluationChromosomes[j], maxDepth)
                 if winner == 0:
                     results[j] += 1
                 elif winner == 1:
                     results[i] += 1
-    
-    totalGames = (populationSize - 1) * populationSize
+                else:
+                    totalGames -= 1
+                cnt += 1
+                print(f'Battle progress: {cnt}/{populationSize * (populationSize - 1)}', end="\r")
+    print()
     return [i / totalGames for i in results]
 
 
@@ -96,9 +100,26 @@ def mutate(x, mutationProbability):
     
     return tuple(newChromosome)
 
+class Log:
+    def __init__(self, numOfGenerations, mutationProbability, populationSize, maxDepth):
+        directoryName = 'genetic_weights'
+        if not os.path.exists(directoryName): os.mkdir(directoryName)
+        self.fileName = f'{numOfGenerations}_{str(mutationProbability).replace(".", ",")}_{populationSize}_{maxDepth}.txt'
+        self.file = open(directoryName + '/' + self.fileName, 'w')
+        self.currGeneration = 1
+
+    def log(self, bestWeight, winProbability):
+        self.file.write(f'{"="*15} Generation #{self.currGeneration} {"="*15}\nWin Probability:\n{winProbability}\nbestWeights:\n{bestWeight}\n\n')
+        self.currGeneration += 1
+    
+    def closeFile(self):
+        self.file.close()
+
 numOfGenerations = int(input("Num of generations: "))
 numOfWeights = 4
 mutationProbability = 0.01
 populationSize = int(input("Population size: "))
+while populationSize % 2 == 1:
+    populationSize = int(input("Populatin size (must be even): "))
 maxDepth = int(input("Max depth: "))
 runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth)
