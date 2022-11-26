@@ -18,7 +18,6 @@ def tournament(weights):
     return weights[0]
 
 
-
 # Plays game between two bots with specified weights, returns tuple with  winner's weights and 1 if black wins, 0 if white wins or -1 if it's a tie.
 def battle(blackWeights, whiteWeights, maxDepth = 2):
     board = Board()
@@ -28,8 +27,9 @@ def battle(blackWeights, whiteWeights, maxDepth = 2):
     blackPlayer = Player(maxDepth, 1, blackWeights)
     whitePlayer = Player(maxDepth, 0, whiteWeights)
     players = [whitePlayer, blackPlayer]
-
+    i = 0
     while checkers[0] + checkers[1] > 0:
+        print(f"turn {i}")
         if board.hasLegalMove(turn):
 
             moveCoords = players[turn].miniMax(board)
@@ -44,6 +44,7 @@ def battle(blackWeights, whiteWeights, maxDepth = 2):
         if board.isTerminal(): break
 
         turn = 1 - turn
+        i += 1
 
     if board.colors[0] > board.colors[1]:
         return whiteWeights, 0
@@ -86,12 +87,12 @@ def generateTuple(numOfWeights, sm):
     return tuple(y)
 
 
-# Conducts numOfTuples tournaments, then conducts final tournament with winners of the tournaments and prints the
+# Conducts numOfTuples tournaments with numOfContestants number of contestants per tournament,
+# then conducts final tournament with winners of the tournaments and prints the
 # winner's weights.
-def determine(numOfTuples, numOfWeights):
+def determine(numOfTuples, numOfContestants, numOfWeights):
     finale = []
     for i in range(numOfTuples):
-        print(f"Tournament number {i+1}")
-        finale.append(tournament(generateStartingWeights(numOfTuples, numOfWeights)))
+        finale.append(tournament(generateStartingWeights(numOfContestants, numOfWeights)))
 
     print(tournament(finale))

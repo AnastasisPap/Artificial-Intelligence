@@ -12,7 +12,7 @@ def main():
     turn = 1
     maxDepth = int(input("Max Depth: "))
     
-    player = Player(maxDepth, 1 - playsFirst, (0.4, 0.3, 0.3))
+    player = Player(maxDepth, 1 - playsFirst, (0.021264, 0.025797, 0.422586, 0.001491))
     while checkers[0] + checkers[1] > 0:
         
         if board.hasLegalMove(turn):
