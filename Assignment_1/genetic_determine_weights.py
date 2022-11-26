@@ -96,8 +96,8 @@ def reproduce(x, y):
     percentagesSecond = [i / (1 - sumXright) for i in x[:splitIdx]]  # Proportions of tuple x's non-variable range.
     newSecond = [(1 - sumYright) * p for p in percentagesSecond]  # New weights based on proportions of tuple x's
     # fixed-range to assign to tuple y's variable range.
-    firstChild = x[:splitIdx] + newFirst
-    secondChild = newSecond + y[splitIdx:]
+    firstChild = x[:splitIdx] + tuple(newFirst)
+    secondChild = tuple(newSecond) + y[splitIdx:]
 
     return firstChild, secondChild
 
