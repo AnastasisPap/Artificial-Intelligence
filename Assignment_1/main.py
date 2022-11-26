@@ -8,7 +8,7 @@ class GameLogger:
         directoryName = 'games'
         if not os.path.exists(directoryName): os.mkdir(directoryName)
         now = datetime.now()
-        fileName = now.strftime('%d-%m-%Y||%H:%M:%S')
+        fileName = now.strftime('%d%m%Y_%H%M%S')
         self.file = open(directoryName + '/' + fileName + '.txt', 'w')
     
     def log(self, output):
