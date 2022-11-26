@@ -33,7 +33,10 @@ def main():
     maxDepth = int(input("Max Depth: "))
     logger.log(f'Max Depth = {maxDepth}\n')
     
-    player = Player(maxDepth, 1 - playsFirst, (0.021264, 0.025797, 0.422586, 0.001491))
+    weights = (0.021264, 0.025797, 0.422586, 0.001491)
+    player = Player(maxDepth, 1 - playsFirst, weights)
+    logger.log(f'Weights used: {weights}\n')
+
     while checkers[0] + checkers[1] > 0:
         
         if board.hasLegalMove(turn):
