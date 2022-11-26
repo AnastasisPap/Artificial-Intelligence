@@ -41,6 +41,7 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
         logging.log(bestWeight, winProbability)
         currentPopulation = newPopulation
 
+    logging.closeFile()
     return bestWeight
 
 

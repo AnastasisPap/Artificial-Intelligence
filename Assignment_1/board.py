@@ -74,21 +74,29 @@ class Board:
 
 
     def printBoard(self):
+        resString = '  '
         symbols = {-1: "   ", 1: ' B ', 0: ' W '}
         print("  ",end='')
         for i in range(8):
             print(f"  {i} ", end='')
+            resString += f'  {i} '
+        resString += '\n'
         print()
-        t = "―" * 30
+        t = "―" * 35
 
         for i in range(len(self.board)):
             print(t)
+            resString += f'{t}\n'
             s = ''
             for c in self.board[i]:
                 s += '|' + symbols[c]
+            resString += str(i) + ' ' + s + '|\n'
             print(str(i) + " " + s + '|')
+        resString += f'{t}\n'
+        resString += f'{self.colors}\n\n\n'
         print(t)
         print(self.colors)
+        return resString
 
     # Returns true if a player can make at least one move
     def hasLegalMove(self, player):
