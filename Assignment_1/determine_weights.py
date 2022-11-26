@@ -29,7 +29,7 @@ def battle(blackWeights, whiteWeights, maxDepth = 2):
     players = [whitePlayer, blackPlayer]
     i = 0
     while checkers[0] + checkers[1] > 0:
-        print(f"turn {i}")
+        #print(f"turn {i}")
         if board.hasLegalMove(turn):
 
             moveCoords = players[turn].miniMax(board)
