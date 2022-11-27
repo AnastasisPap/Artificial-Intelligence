@@ -3,6 +3,7 @@ from board import Board
 from numpy import random
 import random as rand
 
+
 # Conducts a 1 v 1 Knockout Elimination Style Tournament and returns the winner's weights.
 def tournament(weights):
     while len(weights) > 1:
@@ -96,3 +97,9 @@ def determine(numOfTuples, numOfContestants, numOfWeights):
         finale.append(tournament(generateStartingWeights(numOfContestants, numOfWeights)))
 
     print(tournament(finale))
+
+
+numOfTuples = int(input("Number of tournaments: "))
+numOfContestants = int(input("Number of contestants: "))
+numOfWeights = int(input("Number of weights: "))
+determine(numOfTuples, numOfContestants, numOfWeights)

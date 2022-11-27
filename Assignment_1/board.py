@@ -72,7 +72,6 @@ class Board:
     def full(self):
         return self.colors[0] + self.colors[1] == 64
 
-
     def printBoard(self):
         resString = '  '
         symbols = {-1: "   ", 1: ' B ', 0: ' W '}
@@ -181,7 +180,6 @@ class Board:
 
         return True
 
-
     def outflankHorizontally(self, row, col, diskColor):
         _, leftCol = self.move(row, col, 0, -1, diskColor)
         _, rightCol = self.move(row, col, 0, 1, diskColor)
@@ -193,7 +191,6 @@ class Board:
         if rightCol == -1: rightCol = col
         
         return (leftCol, rightCol)
-
 
     def outflankVertically(self, row, col, diskColor):
         upRow, _ = self.move(row, col, -1, 0, diskColor)
@@ -207,7 +204,6 @@ class Board:
 
         return (upRow, downRow)
 
-
     def outflankDiagonally(self, row, col, diskColor):
         leftUp = self.move(row, col, -1, -1, diskColor)
         leftDown = self.move(row, col, 1, -1, diskColor)
@@ -218,7 +214,6 @@ class Board:
         leftGoingDown = self.makeDiagonal(row, col, leftUp, rightDown)
         return leftGoingUp, leftGoingDown
 
-
     def makeDiagonal(self, row, col, leftCorner, rightCorner):
         if leftCorner == [-1, -1] and rightCorner == [-1, -1]: return -1
 
@@ -228,7 +223,6 @@ class Board:
             return [leftCorner, (row, col)]
         else:
             return [(row, col), rightCorner]
-
 
     def move(self, startRow, startCol, stepRow, stepCol, diskColor):
         currCol = startCol + stepCol
@@ -249,10 +243,8 @@ class Board:
 
         return [currRow, currCol]
 
-
     def isTerminal(self):
         return (not self.hasLegalMove(0) and not self.hasLegalMove(1)) or self.colors[0] == 0 or self.colors[1] == 0 or sum(self.colors) == 64
-
 
     def getChildren(self):
         children = []
@@ -261,7 +253,6 @@ class Board:
                 if self.board[r][c] == -1:
                     children.append([r, c])
         return children
-
 
     def getCopy(self):
         newBoard = Board()
@@ -272,7 +263,6 @@ class Board:
         newBoard.opponentLegalMovesSum = self.opponentLegalMovesSum
 
         return newBoard
-
 
     def getLegalMoves(self, diskColor):
         legalMoves = []
