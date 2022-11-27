@@ -113,7 +113,7 @@ def reproduce2(x, y):
     factorTwo = 1 / (sum(secondChild))
     secondChild = [factorTwo * i for i in secondChild]
 
-    return firstChild, secondChild
+    return tuple(firstChild), tuple(secondChild)
 
 # Choose between 0 to len(x) weights, re-distribute their total sum randomly between these weights.
 def mutate(x, mutationProbability):
@@ -139,10 +139,10 @@ def mutate(x, mutationProbability):
 
 
 class Log:
-    def __init__(self, numOfGenerations, mutationProbability, populationSize, maxDepth):
+    def __init__(self, numOfGenerations, mutationProbability, populationSize, maxDepth, funcNum):
         directoryName = 'genetic_weights'
         if not os.path.exists(directoryName): os.mkdir(directoryName)
-        self.fileName = f'{numOfGenerations}_{str(mutationProbability).replace(".", ",")}_{populationSize}_{maxDepth}.txt'
+        self.fileName = f'{numOfGenerations}_{str(mutationProbability).replace(".", ",")}_{populationSize}_{maxDepth}_{funcNum}.txt'
         self.file = open(directoryName + '/' + self.fileName, 'w')
         self.currGeneration = 1
 

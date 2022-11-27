@@ -6,7 +6,7 @@ def u(board, diskColor, weights):
 # How many more disks are in the terminal state from the initial state
 def u1(board, diskColor):
     maxValue = 64 - 1 # E.g. starts from 1 black and x white and ends up with 64 black and 0 white
-    return (board.colors[diskColor] - board.initialColors[diskColor]) / maxValue
+    return (board.colors[diskColor] - board.initialColors[diskColor])
 
 # The sum of possible moves until the max depth
 def u2(board):
@@ -24,15 +24,13 @@ def u3(board, diskColor):
         for pos in getPosValues()[i]:
             posValues[pos[0]][pos[1]] = values[i] * (1 if i != 2 else board.colors[0] + board.colors[1])
 
-    maxValue = values[0] * 32 + values[1] * 16 + 64 * values[2] * 12 + values[3] * 4
-
     totalValue = 0
     for i in range(len(board.board)):
         for j in range(len(board.board[0])):
             if board.board[i][j] == diskColor:
                 totalValue += posValues[i][j]
     
-    return totalValue / maxValue
+    return totalValue
 
 # the amount of legal moves the opponent has
 # 1 - normalized value
