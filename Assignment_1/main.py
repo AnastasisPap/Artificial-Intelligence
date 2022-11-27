@@ -34,7 +34,7 @@ def main():
     maxDepth = int(input("Max Depth: "))
     logger.log(f'Max Depth = {maxDepth}\n')
     
-    weights = (0.021264, 0.025797, 0.422586, 0.001491)
+    weights = (0.08966120524022124, 0.025300321514067744, 0.12755162091380792, 0.7574868523319032)
     player = Player(maxDepth, 1 - playsFirst, weights)
     logger.log(f'Weights used: {weights}\n')
 
