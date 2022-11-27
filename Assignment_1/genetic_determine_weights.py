@@ -8,7 +8,7 @@ import os
 def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth, reproduceFunction):
     # Generate starting population, each chromosome represents a tuple of values (weights) with total sum = 1 .
     currentPopulation = generateStartingWeights(populationSize, numOfWeights)
-    logging = Log(numOfGenerations, mutationProbability, populationSize, maxDepth)
+    logging = Log(numOfGenerations, mutationProbability, populationSize, maxDepth, reproduceFunction)
 
     bestWeight = None
     winProbability = 0
