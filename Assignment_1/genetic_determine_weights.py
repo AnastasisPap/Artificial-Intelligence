@@ -115,6 +115,7 @@ def reproduce2(x, y):
 
     return tuple(firstChild), tuple(secondChild)
 
+
 # Choose between 0 to len(x) weights, re-distribute their total sum randomly between these weights.
 def mutate(x, mutationProbability):
     idxes = []

@@ -3,6 +3,7 @@ from board import Board
 import os
 from datetime import datetime
 
+
 class GameLogger:
     def __init__(self):
         directoryName = 'games'
@@ -85,5 +86,6 @@ def main():
         logger.log('Draw!\n')
 
     logger.closeFile()         
+
 
 main()
