@@ -5,7 +5,7 @@ from determine_weights import *
 import os
 
 
-def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth):
+def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth, reproduceFunction):
     # Generate starting population, each chromosome represents a tuple of values (weights) with total sum = 1 .
     currentPopulation = generateStartingWeights(populationSize, numOfWeights)
     logging = Log(numOfGenerations, mutationProbability, populationSize, maxDepth)
@@ -27,7 +27,7 @@ def runGeneration(numOfGenerations, numOfWeights, mutationProbability, populatio
             firstParent = currentPopulation[firstIdx]
             secondParent = currentPopulation[secondIdx]
 
-            firstChild, secondChild = reproduce(firstParent, secondParent)
+            firstChild, secondChild = reproduce(firstParent, secondParent) if reproduceFunction == 1 else reproduce2(firstParent, secondParent)
             firstChild, secondChild = mutate(firstChild, mutationProbability), mutate(secondChild, mutationProbability)
 
             newPopulation.append(firstChild)
@@ -102,6 +102,19 @@ def reproduce(x, y):
     return firstChild, secondChild
 
 
+def reproduce2(x, y):
+    splitIdx = np.random.randint(len(x))
+
+    firstChild = x[:splitIdx] + y[splitIdx:]
+    secondChild = y[:splitIdx] + x[splitIdx:]
+
+    factorOne = 1 / (sum(firstChild))
+    firstChild = [factorOne * i for i in firstChild]
+    factorTwo = 1 / (sum(secondChild))
+    secondChild = [factorTwo * i for i in secondChild]
+
+    return firstChild, secondChild
+
 # Choose between 0 to len(x) weights, re-distribute their total sum randomly between these weights.
 def mutate(x, mutationProbability):
     idxes = []
@@ -149,4 +162,5 @@ populationSize = int(input("Population size: "))
 while populationSize % 2 == 1:
     populationSize = int(input("Populatin size (must be even): "))
 maxDepth = int(input("Max depth: "))
-runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth)
+reproduceFunction = int(input("Which reproduce function to choose (1 or 2): "))
+runGeneration(numOfGenerations, numOfWeights, mutationProbability, populationSize, maxDepth, reproduceFunction)

@@ -57,8 +57,6 @@ def main():
                     break
             else:
                 moveCoords = player.miniMax(board)
-                # Don't forget to remove.
-                print(moveCoords)
                 logger.log(f'Computer made the move, row: {moveCoords[0]}, col: {moveCoords[1]}\n')
                 board.makeMove(moveCoords[0], moveCoords[1], 1 - playsFirst)
                 
