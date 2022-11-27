@@ -1,4 +1,8 @@
 from board import Board
+
+def u(board, diskColor, weights):
+    return weights[0] * u1(board, diskColor) + weights[1] * u2(board) + weights[2] * u3(board, diskColor) + weights[3] * u4(board) + u5(board, diskColor)
+
 # How many more disks are in the terminal state from the initial state
 def u1(board, diskColor):
     maxValue = 64 - 1 # E.g. starts from 1 black and x white and ends up with 64 black and 0 white

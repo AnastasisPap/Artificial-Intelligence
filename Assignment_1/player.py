@@ -21,7 +21,7 @@ class Player:
 
     def maxValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u2(board) + self.weights[2] * u3(board, self.diskColor) + self.weights[3] * u4(board) + u5(board, self.diskColor)
+            return u(board, self.diskColor, self.weights)
 
         currMax = float('-inf')
         maxCoords = (-1, -1)
@@ -53,8 +53,7 @@ class Player:
 
     def minValue(self, board, depth, a, b):
         if board.isTerminal() or depth == self.maxDepth:
-            # Should this be the diskColor of the root or the other turn?
-            return self.weights[0] * u1(board, self.diskColor) + self.weights[1] * u2(board) + self.weights[2] * u3(board, self.diskColor) + self.weights[3] * u4(board) + u5(board, self.diskColor)
+            return u(board, self.diskColor, self.weights)
 
         currMin = float('inf')
         minCoords = (-1, -1)
