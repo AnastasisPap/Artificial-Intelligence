@@ -1,4 +1,6 @@
+from utils import *
 import numpy as np
+from sklearn.linear_model import LogisticRegression
 from random import sample
 from graph import *
 import pandas as pd
@@ -30,53 +32,38 @@ def predict(x, w):
 
     return np.array(pred_class)
 
-def calculate_metrics(x, y, w):
-    error = 1 - (np.sum(y == predict(x, w)) / len(y))
-    TP = np.sum(np.logical_and(y == 1, predict(x, w) == 1))
-    FP = np.sum(np.logical_and(y == 0, predict(x, w) == 1))
-    FN = np.sum(np.logical_and(y == 1, predict(x, w) == 0))
-
-    precision = TP / (TP + FP)
-    recall = TP / (TP + FN)
-    return error, precision, recall
-
-def evaluate_logistic_regression(training_set, test_set, percentage_increase):
+def evaluate_logistic_regression(training_set, test_set, percentage_increase, max_iter):
     x_train, y_train = training_set
     x_test, y_test = test_set
     x_train = np.insert(x_train, 0, 1, axis=1)
     x_test = np.insert(x_test, 0, 1, axis=1)
     
-    training_error = []
-    test_error = []
-    training_precision = []
-    test_precision = []
-    training_recall = []
-    test_recall = []
+    training_metrics = []
+    training_metrics_sklearn = []
+    test_metrics = []
+    test_metrics_sklearn = []
 
     for i in tqdm(range(percentage_increase, 101, percentage_increase)):
         set_sample = list(sample(list(range(len(x_train))), int(len(x_train) * 0.01 * i)))
         x_train_sample = np.array([x_train[i] for i in set_sample])
         y_train_sample = np.array([y_train[i] for i in set_sample])
-        w = train(x_train_sample, y_train_sample, batch_size=100, epochs=100, learning_rate=0.01, lambda_param=0.001)
+        w = train(x_train_sample, y_train_sample, batch_size=100, epochs=max_iter, learning_rate=0.01, lambda_param=0.001)
+        clf = LogisticRegression(max_iter=max_iter)
+        clf.fit(x_train_sample, y_train_sample)
 
-        training_metrics = calculate_metrics(x_train_sample, y_train_sample, w)
-        training_error.append(training_metrics[0])
-        training_precision.append(training_metrics[1])
-        training_recall.append(training_metrics[2])
+        training_metrics.append(calculate_metrics(x_train_sample, y_train_sample, w, predict))
+        training_metrics_sklearn.append(calculate_metrics(x_train_sample, y_train_sample, w, predict, clf))
+        test_metrics.append(calculate_metrics(x_test, y_test, w, predict))
+        test_metrics_sklearn.append(calculate_metrics(x_test, y_test, w, predict, clf))
 
-        test_metrics = calculate_metrics(x_test, y_test, w)
-        test_error.append(test_metrics[0])
-        test_precision.append(test_metrics[1])
-        test_recall.append(test_metrics[2])
+    training_metrics = np.array(training_metrics)
+    training_metrics_sklearn = np.array(training_metrics_sklearn)
+    test_metrics = np.array(test_metrics)
+    test_metrics_sklearn = np.array(test_metrics_sklearn)
 
-    F_1 = (2 * np.array(test_precision) * np.array(test_recall)) / (np.array(test_precision) + np.array(test_recall))
-    table = np.array([[1-v for v in test_error], test_precision, test_recall, F_1])
-    cols = [str(a)+'%' for a in range(percentage_increase, 101, percentage_increase)]
-    idx = ['Accuracy', 'Precision', 'Recall', 'F1']
-    df = pd.DataFrame(table, columns=cols, index=idx)
-
-    print('\n\n=== Metrics for test set ===')
-    print(df)
-    accuracy_graph(training_error, test_error, percentage_increase)
-    prec_rec_graph(training_precision, training_recall, percentage_increase, 'Training')
-    prec_rec_graph(test_precision, test_recall, percentage_increase, 'Test', list(F_1))
+    accuracy_graph(training_metrics[:, 0], test_metrics[:, 0], percentage_increase)
+    accuracy_graph(training_metrics_sklearn[:, 0], test_metrics_sklearn[:, 0], percentage_increase)
+    metrics_list = [training_metrics, training_metrics_sklearn, test_metrics, test_metrics_sklearn]
+    titles = ['Training', 'Training (sklearn)', 'Test', 'Test (sklearn)']
+    for i, metrics in enumerate(metrics_list):
+        display_metrics(metrics, percentage_increase, titles[i])

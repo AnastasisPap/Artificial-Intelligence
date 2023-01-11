@@ -3,8 +3,6 @@ import numpy as np
 from naive_bayes import *
 import log_reg
 from sklearn.feature_extraction.text import CountVectorizer
-# from sklearn.linear_model import LogisticRegression
-# from sklearn import metrics
 
 def main(n, m, k):
     index_from = n
@@ -32,6 +30,6 @@ def main(n, m, k):
     print('=' * 15 + ' Naive Bayes ' + '=' * 15)
     evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), 10)
     print('=' * 15 + ' Logistic Regression ' + '=' * 15)
-    log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10)
+    log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10, 100)
 
 main(20000, 5000, 20000)
