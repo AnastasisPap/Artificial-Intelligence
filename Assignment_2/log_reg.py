@@ -1,8 +1,6 @@
 import numpy as np
 from random import sample
-import tensorflow as tf
 from graph import *
-from logistic_regression import *
 import pandas as pd
 from tqdm import tqdm
 

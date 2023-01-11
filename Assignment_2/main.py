@@ -29,6 +29,9 @@ def main(n, m, k):
     # log.fit(x_train_binary, y_train)
     # print(metrics.classification_report(y_train, log.predict(x_train_binary))))
         # test_acc.append(metrics.accuracy_score(y_test, log.predict(x_test_binary)))
+    print('=' * 15 + ' Naive Bayes ' + '=' * 15)
+    evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), 10)
+    print('=' * 15 + ' Logistic Regression ' + '=' * 15)
     log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10)
 
 main(20000, 5000, 20000)
