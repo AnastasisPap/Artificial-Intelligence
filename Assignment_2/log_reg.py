@@ -3,6 +3,7 @@ from random import sample
 import tensorflow as tf
 from graph import *
 from logistic_regression import *
+import pandas as pd
 from tqdm import tqdm
 
 def sigmoid(z):
@@ -31,6 +32,16 @@ def predict(x, w):
 
     return np.array(pred_class)
 
+def calculate_metrics(x, y, w):
+    error = 1 - (np.sum(y == predict(x, w)) / len(y))
+    TP = np.sum(np.logical_and(y == 1, predict(x, w) == 1))
+    FP = np.sum(np.logical_and(y == 0, predict(x, w) == 1))
+    FN = np.sum(np.logical_and(y == 1, predict(x, w) == 0))
+
+    precision = TP / (TP + FP)
+    recall = TP / (TP + FN)
+    return error, precision, recall
+
 def evaluate_logistic_regression(training_set, test_set, percentage_increase):
     x_train, y_train = training_set
     x_test, y_test = test_set
@@ -50,21 +61,24 @@ def evaluate_logistic_regression(training_set, test_set, percentage_increase):
         y_train_sample = np.array([y_train[i] for i in set_sample])
         w = train(x_train_sample, y_train_sample, batch_size=100, epochs=100, learning_rate=0.01, lambda_param=0.001)
 
-        training_error.append(1 - (np.sum(y_train_sample == predict(x_train_sample, w))/len(y_train_sample)))
-        test_error.append(1 - (np.sum(y_test == predict(x_test, w)) / len(y_test)))
-        TP_train = np.sum(np.logical_and(y_train_sample == 1, predict(x_train_sample, w) == 1))
-        FP_train = np.sum(np.logical_and(y_train_sample == 0, predict(x_train_sample, w) == 1))
-        FN_train = np.sum(np.logical_and(y_train_sample == 1, predict(x_train_sample, w) == 0))
-        TP_test = np.sum(np.logical_and(y_test == 1, predict(x_test, w) == 1))
-        FP_test = np.sum(np.logical_and(y_test == 0, predict(x_test, w) == 1))
-        FN_test = np.sum(np.logical_and(y_test == 1, predict(x_test, w) == 0))
+        training_metrics = calculate_metrics(x_train_sample, y_train_sample, w)
+        training_error.append(training_metrics[0])
+        training_precision.append(training_metrics[1])
+        training_recall.append(training_metrics[2])
 
-        training_precision.append(TP_train / (TP_train + FP_train))
-        training_recall.append(TP_train / (TP_train + FN_train))
-        test_precision.append(TP_test / (TP_test + FP_test))
-        test_recall.append(TP_test / (TP_test + FN_test))
-    F_1 = (2 * test_precision * test_recall) / (test_precision + test_recall)
+        test_metrics = calculate_metrics(x_test, y_test, w)
+        test_error.append(test_metrics[0])
+        test_precision.append(test_metrics[1])
+        test_recall.append(test_metrics[2])
 
+    F_1 = (2 * np.array(test_precision) * np.array(test_recall)) / (np.array(test_precision) + np.array(test_recall))
+    table = np.array([[1-v for v in test_error], test_precision, test_recall, F_1])
+    cols = [str(a)+'%' for a in range(percentage_increase, 101, percentage_increase)]
+    idx = ['Accuracy', 'Precision', 'Recall', 'F1']
+    df = pd.DataFrame(table, columns=cols, index=idx)
+
+    print('\n\n=== Metrics for test set ===')
+    print(df)
     accuracy_graph(training_error, test_error, percentage_increase)
     prec_rec_graph(training_precision, training_recall, percentage_increase, 'Training')
-    prec_rec_graph(test_precision, test_recall, percentage_increase, 'Test', F_1)
+    prec_rec_graph(test_precision, test_recall, percentage_increase, 'Test', list(F_1))

@@ -3,8 +3,8 @@ import numpy as np
 from naive_bayes import *
 import log_reg
 from sklearn.feature_extraction.text import CountVectorizer
-#from sklearn.linear_model import LogisticRegression
-#from sklearn import metrics
+# from sklearn.linear_model import LogisticRegression
+# from sklearn import metrics
 
 def main(n, m, k):
     index_from = n
@@ -25,10 +25,10 @@ def main(n, m, k):
     x_train_binary = binary_vectorizer.fit_transform(x_train).toarray()
     x_test_binary = binary_vectorizer.transform(x_test).toarray()
 
-        # log = LogisticRegression(solver='saga')
-        # log.fit(x_train_sample, y_train_sample)
-        # train_acc.append(metrics.accuracy_score(y_train_sample, log.predict(x_train_sample)))
+    # log = LogisticRegression(solver='saga')
+    # log.fit(x_train_binary, y_train)
+    # print(metrics.classification_report(y_train, log.predict(x_train_binary))))
         # test_acc.append(metrics.accuracy_score(y_test, log.predict(x_test_binary)))
     log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10)
 
-main(20000, 30000, 20000)
+main(20000, 5000, 20000)

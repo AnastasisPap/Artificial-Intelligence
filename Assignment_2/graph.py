@@ -21,6 +21,6 @@ def prec_rec_graph(precision, recall, perc, type, F_measure = None):
     plt.title(f'Precision/Recall VS. dataset size ({type})')
     plt.plot(x, y, 'g-', label='Precision')
     plt.plot(x, z, 'r--', label='Recall')
-    if F_measure: plt.plot(x, F_measure, 'bo', label='F1')
+    if F_measure: plt.plot(x, F_measure, 'b-', label='F1')
     plt.legend()
     plt.show()
