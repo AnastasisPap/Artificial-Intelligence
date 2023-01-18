@@ -3,6 +3,7 @@ import numpy as np
 from naive_bayes import *
 import log_reg
 from sklearn.feature_extraction.text import CountVectorizer
+from MLP import rnn
 
 def main(n, m, k):
     index_from = n
@@ -23,13 +24,11 @@ def main(n, m, k):
     x_train_binary = binary_vectorizer.fit_transform(x_train).toarray()
     x_test_binary = binary_vectorizer.transform(x_test).toarray()
 
-    # log = LogisticRegression(solver='saga')
-    # log.fit(x_train_binary, y_train)
-    # print(metrics.classification_report(y_train, log.predict(x_train_binary))))
-        # test_acc.append(metrics.accuracy_score(y_test, log.predict(x_test_binary)))
-    print('=' * 15 + ' Naive Bayes ' + '=' * 15)
-    evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), 10)
-    print('=' * 15 + ' Logistic Regression ' + '=' * 15)
-    log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10, 100)
+    # print('=' * 15 + ' Naive Bayes ' + '=' * 15)
+    # evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), 10)
+    # print('=' * 15 + ' Logistic Regression ' + '=' * 15)
+    # log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10, 100)
+    # print('=' * 15 + ' RNN (with LSTM) ' + '=' * 15)
+    rnn((x_train, y_train), (x_test, y_test), m, 100)
 
-main(20000, 5000, 20000)
+main(20000, 1000, 20000)

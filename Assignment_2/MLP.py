@@ -1,63 +1,52 @@
 import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Embedding, GlobalAveragePooling1D
-import fasttext
+from tqdm import tqdm
+from random import sample
+from sklearn.metrics import classification_report
 import numpy as np
 
-def main(n, m, k):
-    index_from = n
-    seed = 113
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.imdb.load_data()
-    word_index = tf.keras.datasets.imdb.get_word_index()
-    index2word = dict((i+3, word) for (word, i) in word_index.items())
-    index2word[0] = '[pad]'
-    index2word[1] = '[bos]'
-    index2word[2] = '[oov]'
-    x_train = np.array([' '.join(index2word[i] if i in index2word else '' for i in review) for review in x_train])
-    x_test = np.array([' '.join(index2word[i] if i in index2word else '' for i in review) for review in x_test])
-    avg_length = get_average_length(x_train)
-    vectorizer = tf.keras.layers.TextVectorization(max_tokens=m, output_mode='int', ngrams=1, name='vector_text', output_sequence_length=avg_length)
-    vectorizer.adapt(x_train)
+def rnn(train_set, test_set, max_vocab, perc):
+    x_train, y_train = train_set
+    x_test, y_test = test_set
+    training_metrics = []
+    test_metrics = []
 
-    fasttext_model = fasttext.load_model('cc.en.300.bin')
-    embeddings_matrix = np.zeros(shape=(len(vectorizer.get_vocabulary()), 300))
+    for i in tqdm(range(perc, 101, perc)):
+        set_sample = list(sample(list(range(len(x_train))), int(len(x_train) * 0.01 * i)))
+        x_sample = np.array([x_train[i] for i in set_sample])
+        y_sample = np.array([y_train[i] for i in set_sample])
 
-    for i, word in enumerate(vectorizer.get_vocabulary()):
-        embeddings_matrix[i] = fasttext_model.get_word_vector(word=word)
-    del fasttext_model
-
-    model = rnn(vectorizer, embeddings_matrix, emb_size=300)
-    model.compile(loss=tf.keras.losses.BinaryCrossentropy(), optimizer=tf.keras.optimizers.Adam(), metrics=['binary_accuracy'])
-    model.fit(x=x_train, y=y_train, epochs=10, verbose=1, batch_size=32)
-    print(model.evaluate(x_test, y_test))
+        model = create_model((x_sample, y_sample), max_vocab)
+        print(model.evaluate(x_test, y_test)[-1])
 
 def get_average_length(x_train):
     avg_len = 0
     for example in x_train: avg_len += len(str(example).split())
     return int(avg_len / len(x_train))
 
-def rnn(vectorizer, embeddings_matrix, num_layers=1, emb_size=64, h_size=64):
-    inputs = tf.keras.layers.Input(shape=(1,), dtype=tf.string, name='txt_input')
-    x = vectorizer(inputs)
-    x = tf.keras.layers.Embedding(
-                                    input_dim=len(vectorizer.get_vocabulary()),
-                                    output_dim=emb_size, name='word_embeddings',
-                                    trainable=False, weights=[embeddings_matrix],
-                                    mask_zero=True)(x)
-    
-    x = tf.keras.layers.Dropout(rate=0.25)(x)
-    for n in range(num_layers):
-        if n != num_layers - 1:
-            x = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(units=h_size,
-                                                name=f'bigru_cell_{n}',
-                                                return_sequences=True,
-                                                dropout=0.2))(x)
-        else:
-            x = tf.keras.layers.Bidirectional(tf.keras.layers.GRU(units=h_size,
-                                                name=f'bigru_cell_{n}',
-                                                dropout=0.2))(x)
-    x = tf.keras.layers.Dropout(rate=0.5)(x)
-    o = tf.keras.layers.Dense(units=1, activation='sigmoid', name='lr')(x)
-    return tf.keras.models.Model(inputs=inputs, outputs=o, name='simple_rnn')
+def create_model(train, max_vocab):
+    x_train, y_train = train
+    avg_length = get_average_length(x_train)
+    vectorizer = tf.keras.layers.TextVectorization(max_tokens=max_vocab, output_sequence_length=avg_length)
+    vectorizer.adapt(x_train)
 
-main(20000, 5000, 20000)
+    model = tf.keras.Sequential([
+        vectorizer,
+        tf.keras.layers.Embedding(
+            input_dim=len(vectorizer.get_vocabulary()),
+            output_dim=64,
+            mask_zero=True),
+        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64)),
+        tf.keras.layers.Dense(64, activation='sigmoid'),
+        tf.keras.layers.Dense(1)
+    ])
+
+    model.compile(
+        loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+        optimizer=tf.keras.optimizers.Adam(),
+        metrics=['accuracy'])
+    
+    model.fit(x=x_train, y=y_train, epochs=1, verbose=1, batch_size=100)
+
+    return model
