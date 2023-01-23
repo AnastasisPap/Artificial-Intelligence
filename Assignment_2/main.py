@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 from naive_bayes import *
 import log_reg
+from sklearn.model_selection import train_test_split 
 from sklearn.feature_extraction.text import CountVectorizer
 from MLP import rnn
 
@@ -23,12 +24,19 @@ def main(n, m, k):
     binary_vectorizer = CountVectorizer(binary=True, max_features=m)
     x_train_binary = binary_vectorizer.fit_transform(x_train).toarray()
     x_test_binary = binary_vectorizer.transform(x_test).toarray()
+    percentage_increase = 20 
+    val_size = 0.2
 
-    # print('=' * 15 + ' Naive Bayes ' + '=' * 15)
-    # evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), 10)
-    # print('=' * 15 + ' Logistic Regression ' + '=' * 15)
-    # log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), 10, 100)
-    # print('=' * 15 + ' RNN (with LSTM) ' + '=' * 15)
-    rnn((x_train, y_train), (x_test, y_test), m, 100)
+    print('=' * 15 + ' Naive Bayes ' + '=' * 15)
+    x_train_split, x_val, y_train_split, y_val = train_test_split(x_train_binary, y_train, test_size=val_size, random_state=55)
+    #evaluate_bayes((x_train_split, y_train_split), (x_val, y_val), percentage_increase)
+    # evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), percentage_increase)
+    print('=' * 15 + ' Logistic Regression ' + '=' * 15)
+    # Resplit them to avoid bias (they are shuffled)
+    x_train_split, x_val, y_train_split, y_val = train_test_split(x_train_binary, y_train, test_size=val_size, random_state=111)
+    #log_reg.evaluate_logistic_regression((x_train_split, y_train_split), (x_val, y_val), percentage_increase, 100)
+    print('=' * 15 + ' RNN (with LSTM) ' + '=' * 15)
+    x_train_split, x_val, y_train_split, y_val = train_test_split(x_train, y_train, test_size=val_size, random_state=253)
+    rnn((x_train_split, y_train_split), (x_val, y_val), m, percentage_increase, 2)
 
 main(20000, 1000, 20000)

@@ -13,7 +13,7 @@ def calculate_metrics(x, y, training, predict_func, clf=None):
     recall = TP / (TP + FN)
     return error, precision, recall
 
-def display_metrics(metrics, perc, title):
+def display_metrics(metrics, perc, title, model_title):
     F_1 = (2 * metrics[:, 1] * metrics[:, 2]) / (metrics[:, 1] + metrics[:, 2])
     table = np.array([[1-v for v in metrics[:, 0]], metrics[:, 1], metrics[:, 2], F_1])
     cols = [str(a)+'%' for a in range(perc, 101, perc)]
@@ -22,4 +22,4 @@ def display_metrics(metrics, perc, title):
 
     print(f'\n\n=== Metrics for {title} ===')
     print(df)
-    prec_rec_graph(metrics[:, 1], metrics[:, 2], perc, title)
+    prec_rec_graph(metrics[:, 1], metrics[:, 2], perc, title, model_title)

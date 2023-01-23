@@ -55,9 +55,9 @@ def evaluate_bayes(training_set, test_set, perc):
     test_metrics = np.array(test_metrics)
     test_metrics_sklearn = np.array(test_metrics_sklearn)
 
-    accuracy_graph(training_metrics[:, 0], test_metrics[:, 0], perc)
-    accuracy_graph(training_metrics_sklearn[:, 0], test_metrics_sklearn[:, 0], perc)
+    accuracy_graph(training_metrics[:, 0], test_metrics[:, 0], perc, 'Naive Bayes')
+    accuracy_graph(training_metrics_sklearn[:, 0], test_metrics_sklearn[:, 0], perc, 'Naive Bayes')
     metrics_list = [training_metrics, training_metrics_sklearn, test_metrics, test_metrics_sklearn]
     titles = ['Training', 'Training (sklearn)', 'Test', 'Test (sklearn)']
     for i, metrics in enumerate(metrics_list):
-        display_metrics(metrics, perc, titles[i])
+        display_metrics(metrics, perc, titles[i], 'Naive Bayes')

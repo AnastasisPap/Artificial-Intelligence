@@ -61,9 +61,9 @@ def evaluate_logistic_regression(training_set, test_set, percentage_increase, ma
     test_metrics = np.array(test_metrics)
     test_metrics_sklearn = np.array(test_metrics_sklearn)
 
-    accuracy_graph(training_metrics[:, 0], test_metrics[:, 0], percentage_increase)
-    accuracy_graph(training_metrics_sklearn[:, 0], test_metrics_sklearn[:, 0], percentage_increase)
+    accuracy_graph(training_metrics[:, 0], test_metrics[:, 0], percentage_increase, 'Logistic regression')
+    accuracy_graph(training_metrics_sklearn[:, 0], test_metrics_sklearn[:, 0], percentage_increase, 'Logistic regression (sklearn)')
     metrics_list = [training_metrics, training_metrics_sklearn, test_metrics, test_metrics_sklearn]
     titles = ['Training', 'Training (sklearn)', 'Test', 'Test (sklearn)']
     for i, metrics in enumerate(metrics_list):
-        display_metrics(metrics, percentage_increase, titles[i])
+        display_metrics(metrics, percentage_increase, titles[i], 'Logistic regression')
