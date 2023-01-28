@@ -29,8 +29,10 @@ def prec_rec_graph(precision, recall, perc, type, model_title, F_measure = None)
 
 def plot_epochs(history, model_title):
     plt.get_current_fig_manager().set_window_title(model_title)
-    plt.plot(history.history['loss'])
+    plt.plot(history.history['loss'], color='blue', label='Training loss')
+    plt.plot(history.history['val_loss'], color='orange', label='Validation loss')
     plt.title('Model loss')
     plt.ylabel('loss')
-    plt.xlabel('epoch')
+    plt.xlabel('epochs')
+    plt.legend()
     plt.show()

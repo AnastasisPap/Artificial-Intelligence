@@ -76,6 +76,6 @@ def create_model(train, max_vocab, epochs):
         optimizer=tf.keras.optimizers.Adam(),
         metrics=['accuracy', precision_m, recall_m])
     
-    history = model.fit(x=x_train, y=y_train, epochs=epochs, verbose=1, batch_size=100)
+    history = model.fit(x=x_train, y=y_train, epochs=epochs, verbose=1, batch_size=100, validation_split=0.2)
 
     return model, history
