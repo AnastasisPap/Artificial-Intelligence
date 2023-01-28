@@ -1,6 +1,29 @@
 import numpy as np
 import pandas as pd
 from graph import *
+from sklearn.feature_extraction.text import CountVectorizer
+import tensorflow as tf
+
+def preprocess_data(n, m, k):
+    index_from = n
+    seed = 113
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.imdb.load_data(index_from=index_from, seed=seed)
+    word_index = tf.keras.datasets.imdb.get_word_index()
+    index2word = dict((i+3, word) for (word, i) in word_index.items())
+    index2word[0] = '[pad]'
+    index2word[1] = '[bos]'
+    index2word[2] = '[oov]'
+    max_idx = max(index2word)
+    idxes = list(range(max_idx, max_idx-k, -1))
+    for idx in idxes: del index2word[idx]
+
+    x_train = np.array([' '.join([index2word[idx] if idx in index2word else '[oov]' for idx in text]) for text in x_train])
+    x_test = np.array([' '.join([index2word[idx] if idx in index2word else '[oov]' for idx in text]) for text in x_test])
+    binary_vectorizer = CountVectorizer(binary=True, max_features=m)
+    x_train_binary = binary_vectorizer.fit_transform(x_train).toarray()
+    x_test_binary = binary_vectorizer.transform(x_test).toarray()
+
+    return (x_train, x_train_binary, y_train), (x_test, x_test_binary, y_test)
 
 def calculate_metrics(x, y, training, predict_func, clf=None):
     prediction = predict_func(x, training) if clf is None else clf.predict(x)

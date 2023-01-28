@@ -32,7 +32,7 @@ def predict(x, w):
 
     return np.array(pred_class)
 
-def evaluate_logistic_regression(training_set, test_set, percentage_increase, max_iter):
+def evaluate_logistic_regression(training_set, test_set, percentage_increase, max_iter, learning_rate=0.01, lambda_=0.001, no_graph=False):
     x_train, y_train = training_set
     x_test, y_test = test_set
     x_train = np.insert(x_train, 0, 1, axis=1)
@@ -43,18 +43,23 @@ def evaluate_logistic_regression(training_set, test_set, percentage_increase, ma
     test_metrics = []
     test_metrics_sklearn = []
 
-    for i in tqdm(range(percentage_increase, 101, percentage_increase)):
+    #for i in tqdm(range(percentage_increase, 101, percentage_increase)):
+    for i in range(percentage_increase, 101, percentage_increase):
         set_sample = list(sample(list(range(len(x_train))), int(len(x_train) * 0.01 * i)))
         x_train_sample = np.array([x_train[i] for i in set_sample])
         y_train_sample = np.array([y_train[i] for i in set_sample])
-        w = train(x_train_sample, y_train_sample, batch_size=100, epochs=max_iter, learning_rate=0.01, lambda_param=0.001)
-        clf = LogisticRegression(max_iter=max_iter)
-        clf.fit(x_train_sample, y_train_sample)
+        w = train(x_train_sample, y_train_sample, batch_size=100, epochs=max_iter, learning_rate=learning_rate, lambda_param=lambda_)
+        if not no_graph:
+            clf = LogisticRegression(max_iter=max_iter)
+            clf.fit(x_train_sample, y_train_sample)
 
         training_metrics.append(calculate_metrics(x_train_sample, y_train_sample, w, predict))
-        training_metrics_sklearn.append(calculate_metrics(x_train_sample, y_train_sample, w, predict, clf))
+        if not no_graph: training_metrics_sklearn.append(calculate_metrics(x_train_sample, y_train_sample, w, predict, clf))
         test_metrics.append(calculate_metrics(x_test, y_test, w, predict))
-        test_metrics_sklearn.append(calculate_metrics(x_test, y_test, w, predict, clf))
+        if not no_graph: test_metrics_sklearn.append(calculate_metrics(x_test, y_test, w, predict, clf))
+
+    if no_graph:
+        return test_metrics[0][0]
 
     training_metrics = np.array(training_metrics)
     training_metrics_sklearn = np.array(training_metrics_sklearn)

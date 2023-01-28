@@ -18,14 +18,15 @@ def precision_m(y, y_hat):
     predicted_pos = K.sum(K.round(K.clip(y_hat, 0, 1)))
     return TP / (predicted_pos + K.epsilon())
 
-def rnn(train_set, test_set, max_vocab, perc, epochs):
+def rnn(train_set, test_set, max_vocab, perc, epochs, no_graph=False):
     x_train, y_train = train_set
     x_test, y_test = test_set
     training_metrics = []
     test_metrics = []
     history = None
 
-    for i in tqdm(range(perc, 101, perc)):
+    #for i in tqdm(range(perc, 101, perc)):
+    for i in range(perc, 101, perc):
         set_sample = list(sample(list(range(len(x_train))), int(len(x_train) * 0.01 * i)))
         x_sample = np.array([x_train[i] for i in set_sample])
         y_sample = np.array([y_train[i] for i in set_sample])
@@ -37,6 +38,9 @@ def rnn(train_set, test_set, max_vocab, perc, epochs):
         loss, accuracy, precision, recall = model.evaluate(x_test, y_test)
         test_metrics.append((1 - accuracy, precision, recall))
     
+    if no_graph:
+        return test_metrics[0][0]
+
     training_metrics = np.array(training_metrics)
     test_metrics = np.array(test_metrics)
 
@@ -72,6 +76,6 @@ def create_model(train, max_vocab, epochs):
         optimizer=tf.keras.optimizers.Adam(),
         metrics=['accuracy', precision_m, recall_m])
     
-    history = model.fit(x=x_train, y=y_train, epochs=epochs, verbose=2, batch_size=100)
+    history = model.fit(x=x_train, y=y_train, epochs=epochs, verbose=1, batch_size=100)
 
     return model, history

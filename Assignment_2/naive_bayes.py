@@ -29,7 +29,7 @@ def test_naive_bayes(x, training):
     
     return p_1 > p_0
 
-def evaluate_bayes(training_set, test_set, perc):
+def evaluate_bayes(training_set, test_set, perc, no_graph=False):
     x_train, y_train = training_set
     x_test, y_test = test_set
     training_metrics = []
@@ -37,19 +37,24 @@ def evaluate_bayes(training_set, test_set, perc):
     training_metrics_sklearn = []
     test_metrics_sklearn = []
 
-    for i in tqdm(range(perc, 101, perc)):
+    #for i in tqdm(range(perc, 101, perc)):
+    for i in range(perc, 101, perc):
         set_sample = sample(list(range(len(x_train))), int(len(x_train) * i * 0.01))
         x_train_sample = np.array([x_train[i] for i in set_sample])
         y_train_sample = np.array([y_train[i] for i in set_sample])
         training = train_naive_bayes((x_train_sample, y_train_sample))
-        clf = BernoulliNB()
-        clf.fit(x_train_sample, y_train_sample)
+        if not no_graph:
+            clf = BernoulliNB()
+            clf.fit(x_train_sample, y_train_sample)
 
         training_metrics.append(calculate_metrics(x_train_sample, y_train_sample, training, test_naive_bayes))
-        training_metrics_sklearn.append(calculate_metrics(x_train_sample, y_train_sample, training, test_naive_bayes, clf))
+        if not no_graph: training_metrics_sklearn.append(calculate_metrics(x_train_sample, y_train_sample, training, test_naive_bayes, clf))
         test_metrics.append(calculate_metrics(x_test, y_test, training, test_naive_bayes))
-        test_metrics_sklearn.append(calculate_metrics(x_test, y_test, training, test_naive_bayes, clf))
+        if not no_graph: test_metrics_sklearn.append(calculate_metrics(x_test, y_test, training, test_naive_bayes, clf))
     
+    if no_graph:
+        return test_metrics[0][0]
+
     training_metrics = np.array(training_metrics)
     training_metrics_sklearn = np.array(training_metrics_sklearn)
     test_metrics = np.array(test_metrics)
