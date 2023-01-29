@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.feature_selection import SelectPercentile, mutual_info_classif
 from graph import *
 from sklearn.feature_extraction.text import CountVectorizer
 import tensorflow as tf
@@ -18,12 +19,16 @@ def preprocess_data(n, m, k):
     for idx in idxes: del index2word[idx]
 
     x_train = np.array([' '.join([index2word[idx] if idx in index2word else '[oov]' for idx in text]) for text in x_train])
+    selector = SelectPercentile(mutual_info_classif, percentile=30)
     x_test = np.array([' '.join([index2word[idx] if idx in index2word else '[oov]' for idx in text]) for text in x_test])
     binary_vectorizer = CountVectorizer(binary=True, max_features=m)
     x_train_binary = binary_vectorizer.fit_transform(x_train).toarray()
     x_test_binary = binary_vectorizer.transform(x_test).toarray()
+    selector.fit(x_train_binary, y_train)
+    x_train_binary_fs = selector.transform(x_train_binary)
+    x_test_binary_fs = selector.transform(x_test_binary)
 
-    return (x_train, x_train_binary, y_train), (x_test, x_test_binary, y_test)
+    return (x_train, x_train_binary_fs, y_train), (x_test, x_test_binary_fs, y_test)
 
 def calculate_metrics(x, y, training, predict_func, clf=None):
     prediction = predict_func(x, training) if clf is None else clf.predict(x)

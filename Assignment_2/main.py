@@ -13,8 +13,8 @@ def main(n, m, k):
     print('=' * 15 + ' Naive Bayes ' + '=' * 15)
     evaluate_bayes((x_train_binary, y_train), (x_test_binary, y_test), percentage_increase)
     print('=' * 15 + ' Logistic Regression ' + '=' * 15)
-    log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), percentage_increase, 100, 0.018, 0.023)
+    log_reg.evaluate_logistic_regression((x_train_binary, y_train), (x_test_binary, y_test), percentage_increase, 100, 0.01, 0.001)
     print('=' * 15 + ' RNN (with LSTM) ' + '=' * 15)
     rnn((x_train, y_train), (x_test, y_test), m, percentage_increase, 10)
 
-main(15000, 5000, 15000)
+main(15000, 6000, 15000)

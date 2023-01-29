@@ -28,12 +28,11 @@ def get_combinations(n_m, n_lambda):
     return combinations
 
 def process_search(combinations, return_list):
-    print('Starting process')
     min_mean_error = 1
     best_combination = None
     val_size = 0.2
 
-    for combination in combinations:
+    for combination in tqdm(combinations):
         m, l = combination
         train, _ = preprocess_data(n, m, k)
 
@@ -49,9 +48,10 @@ def process_search(combinations, return_list):
             best_combination = (n, k, m, learning_rate, l)
     
     return_list.append((1 - min_mean_error, best_combination))
+    #return 1 - min_mean_error, best_combination
     
 def search(num_of_processes):
-    combinations = get_combinations(6, 6)
+    combinations = get_combinations(2, 3)
     manager = Manager()
     return_list = manager.list()
 
@@ -68,7 +68,8 @@ def search(num_of_processes):
         process.join()
     
     max_idx = return_list.index(max(return_list, key=lambda x: x[0]))
+    print(process_search(combinations, []))
     print(return_list[max_idx])
 
 if __name__ == '__main__':
-    search(9)
+    search(6)
